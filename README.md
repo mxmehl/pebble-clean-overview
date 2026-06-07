@@ -2,6 +2,12 @@
 
 A clean digital watchface for Pebble Time 2 (emery, 200×228, 64-color).
 
+![Clean Overview](screenshots/emery_dark_24h.png)
+
+More screenshots in the [screenshots](screenshots/) folder.
+
+**[Install from the Repebble App Store](https://apps.repebble.com/1c84d2017ade47e594a76f20)**
+
 ## Features
 
 - **Digital clock** — Roboto Bold 49 font, follows system 12h/24h setting
