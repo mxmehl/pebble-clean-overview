@@ -2,9 +2,12 @@
 
 A clean digital watchface for Pebble Time 2 (emery, 200×228, 64-color).
 
-![Clean Overview](screenshots/emery_dark_24h.png)
-
-More screenshots in the [screenshots](screenshots/) folder.
+![Dark 24h](screenshots/emery_dark_24h.png)
+![Dark 24h + Seconds](screenshots/emery_dark_24h_seconds.png)
+![Dark 12h + Seconds](screenshots/emery_dark_12h_seconds.png)
+![Light 24h](screenshots/emery_light_24h.png)
+![BT Disconnected](screenshots/emery_dark_bt_disconnected.png)
+![Quiet Time](screenshots/emery_dark_quiet_time.png)
 
 **[Install from the Repebble App Store](https://apps.repebble.com/1c84d2017ade47e594a76f20)**
 
