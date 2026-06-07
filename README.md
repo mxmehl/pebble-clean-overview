@@ -52,6 +52,10 @@ pebble install --phone <ip>
 - **Weather display**: Add weather information (temperature, conditions) via
   Open-Meteo API and PebbleKit JS.
 
+## Acknowledgments
+
+Inspired by [fuzzy-text-watchface](https://github.com/asellitt/fuzzy-text-watchface) by asellitt.
+
 ## License
 
 Apache-2.0

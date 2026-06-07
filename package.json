@@ -2,8 +2,14 @@
   "name": "clean-overview",
   "author": "Max Mehl",
   "version": "1.0.0",
+  "description": "A clean, minimal digital watchface with health stats at a glance. Large time display, configurable seconds (always/on shake), Bluetooth and quiet time indicators, heart rate, steps, calories, and battery. Dark/light mode, localized date format.",
   "keywords": ["pebble-app"],
   "private": true,
+  "homepage": "https://github.com/mxmehl/pebble-clean-overview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mxmehl/pebble-clean-overview.git"
+  },
   "dependencies": {
     "pebble-clay": "^1.0.4"
   },
