@@ -4,8 +4,10 @@ A clean digital watchface for Pebble Time 2 (emery, 200×228, 64-color).
 
 ## Features
 
-- **Digital clock** — LECO 36 bold number font, follows system 12h/24h setting
+- **Digital clock** — Roboto Bold 49 font, follows system 12h/24h setting
 - **Seconds display** — configurable: Off / Always / On shake (wrist flick)
+  - 24h mode: seconds inline in same large font (HH:MM:SS)
+  - 12h mode: seconds and AM/PM stacked in smaller font to the right
 - **Shake duration** — configurable: 3, 5, 10, or 20 seconds
 - **Bluetooth indicator** — top-left corner (cyan = connected, red X = disconnected)
 - **Vibrate on BT disconnect** — toggleable
@@ -52,4 +54,4 @@ pebble install --phone <ip>
 
 ## License
 
-MIT
+Apache-2.0

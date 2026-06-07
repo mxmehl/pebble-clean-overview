@@ -20,7 +20,7 @@
 #define QT_ICON_X        (200 - QT_ICON_W - 8)
 #define QT_ICON_Y        6
 
-#define TIME_Y           60
+#define TIME_Y           45
 #define TIME_H           44
 #define DATE_H           34
 
@@ -98,15 +98,20 @@ static GColor battery_colour(int percent) {
 
 static Window    *s_window;
 static TextLayer *s_time_layer;
+static TextLayer *s_sec_layer;
+static TextLayer *s_ampm_layer;
 static TextLayer *s_date_layer;
 static Layer     *s_stats_layer;
 static Layer     *s_bt_layer;
 static Layer     *s_qt_layer;
 
 static GFont s_time_font;
+static GFont s_sub_font;
 static GFont s_regular_font;
 
-static char s_time_buf[12];  // "HH:MM:SS" + possible AM/PM
+static char s_time_buf[12];
+static char s_sec_buf[4];
+static char s_ampm_buf[4];
 static char s_date_buf[32];
 static char s_hr_buf[8];
 static char s_steps_buf[8];
@@ -151,15 +156,54 @@ static void apply_tick_subscription(void) {
 
 static void update_time_display(struct tm *tick_time) {
   bool show_seconds = (s_seconds_mode == SECONDS_ALWAYS) || s_showing_seconds;
+  bool is_24h = clock_is_24h_style();
 
-  if (clock_is_24h_style()) {
+  if (!s_time_layer) return;
+
+  // Adjust time layer width: full width in 24h, reduced in 12h to leave room for sub-layers
+  Layer *time_l = text_layer_get_layer(s_time_layer);
+  GRect tf = layer_get_frame(time_l);
+  tf.size.w = is_24h ? 200 : 155;
+  layer_set_frame(time_l, tf);
+
+  if (is_24h) {
     strftime(s_time_buf, sizeof(s_time_buf),
              show_seconds ? "%H:%M:%S" : "%H:%M", tick_time);
+    text_layer_set_text(s_time_layer, s_time_buf);
+    if (s_sec_layer) {
+      text_layer_set_text(s_sec_layer, "");
+      layer_set_hidden(text_layer_get_layer(s_sec_layer), true);
+    }
+    if (s_ampm_layer) {
+      text_layer_set_text(s_ampm_layer, "");
+      layer_set_hidden(text_layer_get_layer(s_ampm_layer), true);
+    }
   } else {
-    strftime(s_time_buf, sizeof(s_time_buf),
-             show_seconds ? "%I:%M:%S" : "%I:%M", tick_time);
+    strftime(s_time_buf, sizeof(s_time_buf), "%I:%M", tick_time);
+    text_layer_set_text(s_time_layer, s_time_buf);
+
+    if (s_sec_layer) {
+      if (show_seconds) {
+        // Reset to stacked position for 12h mode
+        Layer *sl = text_layer_get_layer(s_sec_layer);
+        GRect sf = layer_get_frame(sl);
+        sf.origin.y = TIME_Y + 7;
+        layer_set_frame(sl, sf);
+        strftime(s_sec_buf, sizeof(s_sec_buf), ":%S", tick_time);
+        text_layer_set_text(s_sec_layer, s_sec_buf);
+        layer_set_hidden(sl, false);
+      } else {
+        text_layer_set_text(s_sec_layer, "");
+        layer_set_hidden(text_layer_get_layer(s_sec_layer), true);
+      }
+    }
+
+    if (s_ampm_layer) {
+      strftime(s_ampm_buf, sizeof(s_ampm_buf), "%p", tick_time);
+      text_layer_set_text(s_ampm_layer, s_ampm_buf);
+      layer_set_hidden(text_layer_get_layer(s_ampm_layer), false);
+    }
   }
-  text_layer_set_text(s_time_layer, s_time_buf);
 
   strftime(s_date_buf, sizeof(s_date_buf), "%a, %b %e", tick_time);
   text_layer_set_text(s_date_layer, s_date_buf);
@@ -357,6 +401,8 @@ static void health_handler(HealthEventType event, void *context) {
 static void repaint_for_mode(void) {
   window_set_background_color(s_window, s_palette.bg);
   text_layer_set_text_color(s_time_layer, s_palette.text);
+  text_layer_set_text_color(s_sec_layer, s_palette.text);
+  text_layer_set_text_color(s_ampm_layer, s_palette.text);
   text_layer_set_text_color(s_date_layer, s_palette.text);
   layer_mark_dirty(s_stats_layer);
   layer_mark_dirty(s_bt_layer);
@@ -411,16 +457,36 @@ static void main_window_load(Window *window) {
   GRect bounds = layer_get_bounds(root);
   window_set_background_color(window, s_palette.bg);
 
-  s_time_font = fonts_get_system_font(FONT_KEY_LECO_36_BOLD_NUMBERS);
+  s_time_font = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
+  s_sub_font = fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21);
   s_regular_font = fonts_get_system_font(FONT_KEY_GOTHIC_28);
 
-  // Time layer - centered
-  s_time_layer = text_layer_create(GRect(0, TIME_Y, bounds.size.w, TIME_H));
+  // Time layer - HH:MM (or HH:MM:SS in 24h mode)
+  // Left-aligned with offset to visually center the group
+  int time_w = bounds.size.w;
+  s_time_layer = text_layer_create(GRect(0, TIME_Y, time_w, 56));
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, s_palette.text);
   text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   layer_add_child(root, text_layer_get_layer(s_time_layer));
+
+  // Seconds sub-layer (top-right of time, for 12h mode)
+  int sub_x = 155;
+  s_sec_layer = text_layer_create(GRect(sub_x, TIME_Y + 7, 42, 22));
+  text_layer_set_background_color(s_sec_layer, GColorClear);
+  text_layer_set_text_color(s_sec_layer, s_palette.text);
+  text_layer_set_font(s_sec_layer, s_sub_font);
+  text_layer_set_text_alignment(s_sec_layer, GTextAlignmentLeft);
+  layer_add_child(root, text_layer_get_layer(s_sec_layer));
+
+  // AM/PM sub-layer (below seconds, for 12h mode)
+  s_ampm_layer = text_layer_create(GRect(sub_x, TIME_Y + 28, 42, 22));
+  text_layer_set_background_color(s_ampm_layer, GColorClear);
+  text_layer_set_text_color(s_ampm_layer, s_palette.text);
+  text_layer_set_font(s_ampm_layer, s_sub_font);
+  text_layer_set_text_alignment(s_ampm_layer, GTextAlignmentLeft);
+  layer_add_child(root, text_layer_get_layer(s_ampm_layer));
 
   // Stats layer
   int stats_h = ICON_BOX_H + STAT_ROW_GAP_PX + STAT_TEXT_H;
@@ -451,6 +517,8 @@ static void main_window_load(Window *window) {
 
 static void main_window_unload(Window *window) {
   text_layer_destroy(s_time_layer);
+  text_layer_destroy(s_sec_layer);
+  text_layer_destroy(s_ampm_layer);
   text_layer_destroy(s_date_layer);
   layer_destroy(s_stats_layer);
   layer_destroy(s_bt_layer);
