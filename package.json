@@ -18,7 +18,8 @@
       "DARK_MODE",
       "SECONDS_MODE",
       "SHAKE_DURATION",
-      "VIBRATE_ON_DISCONNECT"
+      "VIBRATE_ON_DISCONNECT",
+      "SHOW_WEEK"
     ],
     "targetPlatforms": ["emery"],
     "watchapp": { "watchface": true },

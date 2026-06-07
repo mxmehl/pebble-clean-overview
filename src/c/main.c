@@ -38,6 +38,7 @@
 #define PERSIST_KEY_SECONDS_MODE        2
 #define PERSIST_KEY_SHAKE_DURATION      3
 #define PERSIST_KEY_VIBRATE_ON_DISCONNECT 4
+#define PERSIST_KEY_SHOW_WEEK             5
 
 // --- seconds modes -----------------------------------------------------
 
@@ -130,6 +131,7 @@ static bool s_dark_mode = true;
 static int  s_seconds_mode = SECONDS_OFF;
 static int  s_shake_duration = 5;
 static bool s_vibrate_on_disconnect = true;
+static bool s_show_week = true;
 
 static AppTimer *s_seconds_timer = NULL;
 static bool      s_showing_seconds = false;
@@ -207,16 +209,25 @@ static void update_time_display(struct tm *tick_time) {
 
   // Localized date format
   const char *locale = i18n_get_system_locale();
+  char date_core[20];
 
   if (strncmp(locale, "de", 2) == 0) {
     static const char *de_days[] = {"So","Mo","Di","Mi","Do","Fr","Sa"};
-    static const char *de_months[] = {"Jan","Feb","Mär","Apr","Mai","Jun",
+    static const char *de_months[] = {"Jan","Feb","Mar","Apr","Mai","Jun",
                                        "Jul","Aug","Sep","Okt","Nov","Dez"};
-    snprintf(s_date_buf, sizeof(s_date_buf), "%s, %d. %s",
+    snprintf(date_core, sizeof(date_core), "%s, %d. %s",
              de_days[tick_time->tm_wday], tick_time->tm_mday,
              de_months[tick_time->tm_mon]);
   } else {
-    strftime(s_date_buf, sizeof(s_date_buf), "%a, %b %e", tick_time);
+    strftime(date_core, sizeof(date_core), "%a, %b %e", tick_time);
+  }
+
+  if (s_show_week) {
+    char week_buf[4];
+    strftime(week_buf, sizeof(week_buf), "%V", tick_time);
+    snprintf(s_date_buf, sizeof(s_date_buf), "%s | W%s", date_core, week_buf);
+  } else {
+    strncpy(s_date_buf, date_core, sizeof(s_date_buf));
   }
   text_layer_set_text(s_date_layer, s_date_buf);
 }
@@ -455,6 +466,14 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
     persist_write_int(PERSIST_KEY_SHAKE_DURATION, s_shake_duration);
   }
 
+  t = dict_find(iter, MESSAGE_KEY_SHOW_WEEK);
+  if (t) {
+    s_show_week = (t->value->int32 != 0);
+    persist_write_bool(PERSIST_KEY_SHOW_WEEK, s_show_week);
+    time_t now = time(NULL);
+    update_time_display(localtime(&now));
+  }
+
   t = dict_find(iter, MESSAGE_KEY_VIBRATE_ON_DISCONNECT);
   if (t) {
     s_vibrate_on_disconnect = (t->value->int32 != 0);
@@ -549,6 +568,8 @@ static void init(void) {
                      ? persist_read_int(PERSIST_KEY_SHAKE_DURATION) : 5;
   s_vibrate_on_disconnect = persist_exists(PERSIST_KEY_VIBRATE_ON_DISCONNECT)
                             ? persist_read_bool(PERSIST_KEY_VIBRATE_ON_DISCONNECT) : true;
+  s_show_week = persist_exists(PERSIST_KEY_SHOW_WEEK)
+                ? persist_read_bool(PERSIST_KEY_SHOW_WEEK) : true;
 
   apply_palette(s_dark_mode);
 

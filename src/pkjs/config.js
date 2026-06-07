@@ -16,6 +16,12 @@ module.exports = [
         "messageKey": "DARK_MODE",
         "label": "Dark mode",
         "defaultValue": true
+      },
+      {
+        "type": "toggle",
+        "messageKey": "SHOW_WEEK",
+        "label": "Show calendar week",
+        "defaultValue": true
       }
     ]
   },
