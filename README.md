@@ -13,7 +13,7 @@ A clean digital watchface for Pebble Time 2 (emery, 200×228, 64-color).
 - **Vibrate on BT disconnect** — toggleable
 - **Quiet time indicator** — crescent moon icon, top-right corner (visible when active)
 - **Health stats** — heart rate, steps, calories, battery
-- **Date** — bottom of screen
+- **Date** — bottom of screen, localized format (German: "So, 7. Jun", English: "Sun, Jun 7")
 - **Dark/light mode** — toggleable via settings
 
 ## Settings

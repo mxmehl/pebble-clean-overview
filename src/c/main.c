@@ -205,7 +205,19 @@ static void update_time_display(struct tm *tick_time) {
     }
   }
 
-  strftime(s_date_buf, sizeof(s_date_buf), "%a, %b %e", tick_time);
+  // Localized date format
+  const char *locale = i18n_get_system_locale();
+
+  if (strncmp(locale, "de", 2) == 0) {
+    static const char *de_days[] = {"So","Mo","Di","Mi","Do","Fr","Sa"};
+    static const char *de_months[] = {"Jan","Feb","Mär","Apr","Mai","Jun",
+                                       "Jul","Aug","Sep","Okt","Nov","Dez"};
+    snprintf(s_date_buf, sizeof(s_date_buf), "%s, %d. %s",
+             de_days[tick_time->tm_wday], tick_time->tm_mday,
+             de_months[tick_time->tm_mon]);
+  } else {
+    strftime(s_date_buf, sizeof(s_date_buf), "%a, %b %e", tick_time);
+  }
   text_layer_set_text(s_date_layer, s_date_buf);
 }
 
