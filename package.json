@@ -1,0 +1,37 @@
+{
+  "name": "clean-overview",
+  "author": "Max Mehl",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {
+    "pebble-clay": "^1.0.4"
+  },
+  "pebble": {
+    "displayName": "Clean Overview",
+    "uuid": "7b06429c-0f4a-4f2a-a937-bc10de373eae",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "projectType": "native",
+    "capabilities": ["configurable", "health"],
+    "messageKeys": [
+      "DARK_MODE",
+      "SECONDS_MODE",
+      "SHAKE_DURATION",
+      "VIBRATE_ON_DISCONNECT"
+    ],
+    "targetPlatforms": ["emery"],
+    "watchapp": { "watchface": true },
+    "resources": {
+      "media": [
+        {
+          "file": "images/menu-icon",
+          "menuIcon": true,
+          "name": "IMAGE_MENU_ICON",
+          "targetPlatforms": null,
+          "type": "png"
+        }
+      ]
+    }
+  }
+}
