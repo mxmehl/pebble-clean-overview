@@ -1,0 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Max Mehl <https://mehl.mx>
+//
+// SPDX-License-Identifier: Apache-2.0
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>OpenRailAssociation/renovate-config"],
+}
