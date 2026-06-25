@@ -1,9 +1,11 @@
 {
   "name": "clean-overview",
   "author": "Max Mehl",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A clean, minimal digital watchface with health stats at a glance. Large time display, configurable seconds (always/on shake), Bluetooth and quiet time indicators, heart rate, steps, calories, and battery. Dark/light mode, localized date format.",
-  "keywords": ["pebble-app"],
+  "keywords": [
+    "pebble-app"
+  ],
   "private": true,
   "homepage": "https://github.com/mxmehl/pebble-clean-overview",
   "repository": {
@@ -19,7 +21,10 @@
     "sdkVersion": "3",
     "enableMultiJS": true,
     "projectType": "native",
-    "capabilities": ["configurable", "health"],
+    "capabilities": [
+      "configurable",
+      "health"
+    ],
     "messageKeys": [
       "DARK_MODE",
       "SECONDS_MODE",
@@ -27,8 +32,12 @@
       "VIBRATE_ON_DISCONNECT",
       "SHOW_WEEK"
     ],
-    "targetPlatforms": ["emery"],
-    "watchapp": { "watchface": true },
+    "targetPlatforms": [
+      "emery"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
     "resources": {
       "media": [
         {
