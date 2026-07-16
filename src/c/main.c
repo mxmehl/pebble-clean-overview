@@ -42,9 +42,11 @@
 
 // --- seconds modes -----------------------------------------------------
 
-#define SECONDS_OFF      0
-#define SECONDS_ALWAYS   1
-#define SECONDS_ON_SHAKE 2
+#define SECONDS_OFF              0
+#define SECONDS_ALWAYS           1
+#define SECONDS_ON_SHAKE         2
+#define SECONDS_ON_BACKLIGHT     3
+#define SECONDS_ON_SHAKE_OR_BL   4
 
 // --- palette -----------------------------------------------------------
 
@@ -267,8 +269,32 @@ static void trigger_seconds_display(void) {
 }
 
 static void accel_tap_handler(AccelAxisType axis, int32_t direction) {
-  if (s_seconds_mode != SECONDS_ON_SHAKE) return;
-  trigger_seconds_display();
+  if (s_seconds_mode == SECONDS_ON_SHAKE || s_seconds_mode == SECONDS_ON_SHAKE_OR_BL) {
+    trigger_seconds_display();
+  }
+  if (s_seconds_mode == SECONDS_ON_BACKLIGHT || s_seconds_mode == SECONDS_ON_SHAKE_OR_BL) {
+    light_enable_interaction();
+  }
+}
+
+// --- backlight handler -------------------------------------------------
+
+static void backlight_handler(bool on) {
+  if (s_seconds_mode != SECONDS_ON_BACKLIGHT && s_seconds_mode != SECONDS_ON_SHAKE_OR_BL) return;
+
+  if (on) {
+    // Backlight activated — cancel any fallback timer, let backlight control duration
+    if (s_seconds_timer) {
+      app_timer_cancel(s_seconds_timer);
+      s_seconds_timer = NULL;
+    }
+    s_showing_seconds = true;
+  } else {
+    s_showing_seconds = false;
+  }
+  apply_tick_subscription();
+  time_t now = time(NULL);
+  update_time_display(localtime(&now));
 }
 
 // --- Bluetooth layer ---------------------------------------------------
@@ -606,6 +632,9 @@ static void init(void) {
   // Accelerometer tap for shake-to-show-seconds
   accel_tap_service_subscribe(accel_tap_handler);
 
+  // Backlight service for show-seconds-on-backlight
+  backlight_service_subscribe(backlight_handler);
+
 #if defined(PBL_HEALTH)
   if (health_service_events_subscribe(health_handler, NULL)) {
     refresh_health();
@@ -625,6 +654,7 @@ static void deinit(void) {
   battery_state_service_unsubscribe();
   connection_service_unsubscribe();
   accel_tap_service_unsubscribe();
+  backlight_service_unsubscribe();
 #if defined(PBL_HEALTH)
   health_service_events_unsubscribe();
 #endif

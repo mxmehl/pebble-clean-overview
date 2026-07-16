@@ -41,13 +41,15 @@ module.exports = [
         "options": [
           {"label": "Off", "value": 0},
           {"label": "Always", "value": 1},
-          {"label": "On shake", "value": 2}
+          {"label": "On shake", "value": 2},
+          {"label": "On backlight", "value": 3},
+          {"label": "On shake or backlight", "value": 4}
         ]
       },
       {
         "type": "select",
         "messageKey": "SHAKE_DURATION",
-        "label": "Display duration",
+        "label": "Display duration (on shake)",
         "defaultValue": 5,
         "options": [
           {"label": "3 seconds", "value": 3},
