@@ -30,7 +30,11 @@
       "SECONDS_MODE",
       "SHAKE_DURATION",
       "VIBRATE_ON_DISCONNECT",
-      "SHOW_WEEK"
+      "SHOW_WEEK",
+      "SLOT_TOP_LEFT",
+      "SLOT_TOP_RIGHT",
+      "SLOT_BOTTOM_LEFT",
+      "SLOT_BOTTOM_RIGHT"
     ],
     "targetPlatforms": [
       "emery"

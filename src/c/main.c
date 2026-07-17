@@ -39,6 +39,18 @@
 #define PERSIST_KEY_SHAKE_DURATION      3
 #define PERSIST_KEY_VIBRATE_ON_DISCONNECT 4
 #define PERSIST_KEY_SHOW_WEEK             5
+#define PERSIST_KEY_SLOT_TOP_LEFT         6
+#define PERSIST_KEY_SLOT_TOP_RIGHT        7
+#define PERSIST_KEY_SLOT_BOTTOM_LEFT      8
+#define PERSIST_KEY_SLOT_BOTTOM_RIGHT     9
+
+// --- stat slot types -----------------------------------------------------
+
+#define SLOT_NONE     0
+#define SLOT_HEART    1
+#define SLOT_STEPS    2
+#define SLOT_CALORIES 3
+#define SLOT_BATTERY  4
 
 // --- seconds modes -----------------------------------------------------
 
@@ -116,10 +128,6 @@ static char s_time_buf[12];
 static char s_sec_buf[4];
 static char s_ampm_buf[4];
 static char s_date_buf[32];
-static char s_hr_buf[8];
-static char s_steps_buf[8];
-static char s_cal_buf[8];
-static char s_batt_buf[8];
 
 static int  s_hr = 0;
 static int  s_steps_val = 0;
@@ -134,6 +142,10 @@ static int  s_seconds_mode = SECONDS_OFF;
 static int  s_shake_duration = 5;
 static bool s_vibrate_on_disconnect = true;
 static bool s_show_week = true;
+static int  s_slot_top_left = SLOT_HEART;
+static int  s_slot_top_right = SLOT_STEPS;
+static int  s_slot_bottom_left = SLOT_CALORIES;
+static int  s_slot_bottom_right = SLOT_BATTERY;
 
 static AppTimer *s_seconds_timer = NULL;
 static bool      s_showing_seconds = false;
@@ -355,6 +367,46 @@ static void qt_update_proc(Layer *layer, GContext *ctx) {
 
 // --- stats layer -------------------------------------------------------
 
+// Draws one stat slot (icon + text) at the given box position.
+// Returns via out params nothing; draws directly.
+static void draw_slot(GContext *ctx, int slot_type, int x, int y) {
+  if (slot_type == SLOT_NONE) return;
+
+  char buf[8];
+  GColor color;
+
+  switch (slot_type) {
+    case SLOT_HEART:
+      icons_draw_heart(ctx, x, y, s_palette.heart, s_palette.bg);
+      format_stat(s_hr, buf, sizeof(buf));
+      color = s_palette.heart;
+      break;
+    case SLOT_STEPS:
+      icons_draw_steps(ctx, x, y, s_palette.steps);
+      format_stat(s_steps_val, buf, sizeof(buf));
+      color = s_palette.steps;
+      break;
+    case SLOT_CALORIES:
+      icons_draw_flame(ctx, x, y, s_palette.flame, s_palette.bg);
+      format_stat(s_calories, buf, sizeof(buf));
+      color = s_palette.flame;
+      break;
+    case SLOT_BATTERY:
+      color = battery_colour(s_battery_percent);
+      icons_draw_battery(ctx, x, y, s_palette.text, s_palette.bg, color,
+                         s_battery_percent, s_charging);
+      format_stat(s_battery_percent, buf, sizeof(buf));
+      break;
+    default:
+      return;
+  }
+
+  graphics_context_set_text_color(ctx, color);
+  graphics_draw_text(ctx, buf, s_regular_font,
+    GRect(x + STAT_TEXT_X_OFFSET, y + STAT_TEXT_Y_OFFSET, 80, STAT_TEXT_H),
+    GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+}
+
 static void stats_update_proc(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
 
@@ -366,41 +418,10 @@ static void stats_update_proc(Layer *layer, GContext *ctx) {
   int yRow1 = 0;
   int yRow2 = ICON_BOX_H + STAT_ROW_GAP_PX;
 
-  GColor battC = battery_colour(s_battery_percent);
-
-  // Heart
-  icons_draw_heart(ctx, xLeft, yRow1, s_palette.heart, s_palette.bg);
-  format_stat(s_hr, s_hr_buf, sizeof(s_hr_buf));
-  graphics_context_set_text_color(ctx, s_palette.heart);
-  graphics_draw_text(ctx, s_hr_buf, s_regular_font,
-    GRect(xLeft + STAT_TEXT_X_OFFSET, yRow1 + STAT_TEXT_Y_OFFSET, 80, STAT_TEXT_H),
-    GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-
-  // Steps
-  icons_draw_steps(ctx, xRight, yRow1, s_palette.steps);
-  format_stat(s_steps_val, s_steps_buf, sizeof(s_steps_buf));
-  graphics_context_set_text_color(ctx, s_palette.steps);
-  graphics_draw_text(ctx, s_steps_buf, s_regular_font,
-    GRect(xRight + STAT_TEXT_X_OFFSET, yRow1 + STAT_TEXT_Y_OFFSET, 80, STAT_TEXT_H),
-    GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-
-  // Flame (calories)
-  icons_draw_flame(ctx, xLeft, yRow2, s_palette.flame, s_palette.bg);
-  format_stat(s_calories, s_cal_buf, sizeof(s_cal_buf));
-  graphics_context_set_text_color(ctx, s_palette.flame);
-  graphics_draw_text(ctx, s_cal_buf, s_regular_font,
-    GRect(xLeft + STAT_TEXT_X_OFFSET, yRow2 + STAT_TEXT_Y_OFFSET, 80, STAT_TEXT_H),
-    GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-
-  // Battery
-  icons_draw_battery(ctx, xRight, yRow2,
-                     s_palette.text, s_palette.bg, battC,
-                     s_battery_percent, s_charging);
-  format_stat(s_battery_percent, s_batt_buf, sizeof(s_batt_buf));
-  graphics_context_set_text_color(ctx, battC);
-  graphics_draw_text(ctx, s_batt_buf, s_regular_font,
-    GRect(xRight + STAT_TEXT_X_OFFSET, yRow2 + STAT_TEXT_Y_OFFSET, 80, STAT_TEXT_H),
-    GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  draw_slot(ctx, s_slot_top_left, xLeft, yRow1);
+  draw_slot(ctx, s_slot_top_right, xRight, yRow1);
+  draw_slot(ctx, s_slot_bottom_left, xLeft, yRow2);
+  draw_slot(ctx, s_slot_bottom_right, xRight, yRow2);
 }
 
 // --- battery handler ---------------------------------------------------
@@ -505,6 +526,34 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
     s_vibrate_on_disconnect = (t->value->int32 != 0);
     persist_write_bool(PERSIST_KEY_VIBRATE_ON_DISCONNECT, s_vibrate_on_disconnect);
   }
+
+  t = dict_find(iter, MESSAGE_KEY_SLOT_TOP_LEFT);
+  if (t) {
+    s_slot_top_left = atoi(t->value->cstring);
+    persist_write_int(PERSIST_KEY_SLOT_TOP_LEFT, s_slot_top_left);
+    layer_mark_dirty(s_stats_layer);
+  }
+
+  t = dict_find(iter, MESSAGE_KEY_SLOT_TOP_RIGHT);
+  if (t) {
+    s_slot_top_right = atoi(t->value->cstring);
+    persist_write_int(PERSIST_KEY_SLOT_TOP_RIGHT, s_slot_top_right);
+    layer_mark_dirty(s_stats_layer);
+  }
+
+  t = dict_find(iter, MESSAGE_KEY_SLOT_BOTTOM_LEFT);
+  if (t) {
+    s_slot_bottom_left = atoi(t->value->cstring);
+    persist_write_int(PERSIST_KEY_SLOT_BOTTOM_LEFT, s_slot_bottom_left);
+    layer_mark_dirty(s_stats_layer);
+  }
+
+  t = dict_find(iter, MESSAGE_KEY_SLOT_BOTTOM_RIGHT);
+  if (t) {
+    s_slot_bottom_right = atoi(t->value->cstring);
+    persist_write_int(PERSIST_KEY_SLOT_BOTTOM_RIGHT, s_slot_bottom_right);
+    layer_mark_dirty(s_stats_layer);
+  }
 }
 
 // --- window load/unload ------------------------------------------------
@@ -596,6 +645,14 @@ static void init(void) {
                             ? persist_read_bool(PERSIST_KEY_VIBRATE_ON_DISCONNECT) : true;
   s_show_week = persist_exists(PERSIST_KEY_SHOW_WEEK)
                 ? persist_read_bool(PERSIST_KEY_SHOW_WEEK) : true;
+  s_slot_top_left = persist_exists(PERSIST_KEY_SLOT_TOP_LEFT)
+                     ? persist_read_int(PERSIST_KEY_SLOT_TOP_LEFT) : SLOT_HEART;
+  s_slot_top_right = persist_exists(PERSIST_KEY_SLOT_TOP_RIGHT)
+                      ? persist_read_int(PERSIST_KEY_SLOT_TOP_RIGHT) : SLOT_STEPS;
+  s_slot_bottom_left = persist_exists(PERSIST_KEY_SLOT_BOTTOM_LEFT)
+                        ? persist_read_int(PERSIST_KEY_SLOT_BOTTOM_LEFT) : SLOT_CALORIES;
+  s_slot_bottom_right = persist_exists(PERSIST_KEY_SLOT_BOTTOM_RIGHT)
+                         ? persist_read_int(PERSIST_KEY_SLOT_BOTTOM_RIGHT) : SLOT_BATTERY;
 
   apply_palette(s_dark_mode);
 
