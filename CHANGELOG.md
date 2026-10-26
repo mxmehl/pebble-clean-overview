@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://github.com/mxmehl/pebble-clean-overview/compare/clean-overview-v1.1.0...clean-overview-v1.2.0) (2026-10-26)
+
+
+### 🚀 New Features
+
+* add backlight as a trigger for seconds display ([#8](https://github.com/mxmehl/pebble-clean-overview/issues/8)) ([0ce75dd](https://github.com/mxmehl/pebble-clean-overview/commit/0ce75dd9f95ef96987ac0be070f569143775736b))
+
+
+### ⚙️ Chores
+
+* **deps:** update actions/checkout action to v7.0.1 ([#14](https://github.com/mxmehl/pebble-clean-overview/issues/14)) ([fe36373](https://github.com/mxmehl/pebble-clean-overview/commit/fe363739e713d6b2364d237c0e6ce87c60f71b21))
+* **deps:** update actions/create-github-app-token action to v3.3.0 ([#19](https://github.com/mxmehl/pebble-clean-overview/issues/19)) ([2061412](https://github.com/mxmehl/pebble-clean-overview/commit/20614127554807cc67ffd5fe00bac63489ba3f03))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.0 ([#13](https://github.com/mxmehl/pebble-clean-overview/issues/13)) ([e2f11fc](https://github.com/mxmehl/pebble-clean-overview/commit/e2f11fc7ae95cdd4fa4206ad279ec29e8fab1f0a))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.1 ([#15](https://github.com/mxmehl/pebble-clean-overview/issues/15)) ([5e5e4ab](https://github.com/mxmehl/pebble-clean-overview/commit/5e5e4abe9542f85754d7225779d90e90fb1e8c0f))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.2 ([#16](https://github.com/mxmehl/pebble-clean-overview/issues/16)) ([d98eede](https://github.com/mxmehl/pebble-clean-overview/commit/d98eede90e8f6c72f5bebdc997cba32b39aeff69))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.3 ([#17](https://github.com/mxmehl/pebble-clean-overview/issues/17)) ([5c31a47](https://github.com/mxmehl/pebble-clean-overview/commit/5c31a47c5960f79773ef3407e162133366bc3791))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.4 ([#18](https://github.com/mxmehl/pebble-clean-overview/issues/18)) ([62a0539](https://github.com/mxmehl/pebble-clean-overview/commit/62a0539b3932a5aec06bcf0d6c514fa45251a207))
+* **deps:** update zizmorcore/zizmor-action action to v0.7.0 ([#20](https://github.com/mxmehl/pebble-clean-overview/issues/20)) ([6dab78e](https://github.com/mxmehl/pebble-clean-overview/commit/6dab78e5b953c83b7696e7b8e50de82fd0dd387c))
+* **deps:** update zizmorcore/zizmor-action action to v0.7.1 ([#21](https://github.com/mxmehl/pebble-clean-overview/issues/21)) ([79efb8f](https://github.com/mxmehl/pebble-clean-overview/commit/79efb8f9da338d3b3198d3b0ad8ec924c0d701bc))
+* **deps:** update zizmorcore/zizmor-action action to v0.8.0 ([#22](https://github.com/mxmehl/pebble-clean-overview/issues/22)) ([4e06997](https://github.com/mxmehl/pebble-clean-overview/commit/4e06997875ba78732da7ce812bfe3ea338422e15))
+
 ## [1.1.0](https://github.com/mxmehl/pebble-clean-overview/compare/clean-overview-v1.0.0...clean-overview-v1.1.0) (2026-06-25)
 
 
