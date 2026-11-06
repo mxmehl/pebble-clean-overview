@@ -77,6 +77,68 @@ module.exports = [
     ]
   },
   {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
+        "defaultValue": "Stats Layout",
+        "size": 4
+      },
+      {
+        "type": "select",
+        "messageKey": "SLOT_TOP_LEFT",
+        "label": "Top-left",
+        "defaultValue": 1,
+        "options": [
+          {"label": "None", "value": 0},
+          {"label": "Heart rate", "value": 1},
+          {"label": "Steps", "value": 2},
+          {"label": "Calories", "value": 3},
+          {"label": "Battery", "value": 4}
+        ]
+      },
+      {
+        "type": "select",
+        "messageKey": "SLOT_TOP_RIGHT",
+        "label": "Top-right",
+        "defaultValue": 2,
+        "options": [
+          {"label": "None", "value": 0},
+          {"label": "Heart rate", "value": 1},
+          {"label": "Steps", "value": 2},
+          {"label": "Calories", "value": 3},
+          {"label": "Battery", "value": 4}
+        ]
+      },
+      {
+        "type": "select",
+        "messageKey": "SLOT_BOTTOM_LEFT",
+        "label": "Bottom-left",
+        "defaultValue": 3,
+        "options": [
+          {"label": "None", "value": 0},
+          {"label": "Heart rate", "value": 1},
+          {"label": "Steps", "value": 2},
+          {"label": "Calories", "value": 3},
+          {"label": "Battery", "value": 4}
+        ]
+      },
+      {
+        "type": "select",
+        "messageKey": "SLOT_BOTTOM_RIGHT",
+        "label": "Bottom-right",
+        "defaultValue": 4,
+        "options": [
+          {"label": "None", "value": 0},
+          {"label": "Heart rate", "value": 1},
+          {"label": "Steps", "value": 2},
+          {"label": "Calories", "value": 3},
+          {"label": "Battery", "value": 4}
+        ]
+      }
+    ]
+  },
+  {
     "type": "submit",
     "defaultValue": "Save"
   }
